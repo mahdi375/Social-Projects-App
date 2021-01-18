@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectsController extends Controller
 {
@@ -21,11 +22,10 @@ class ProjectsController extends Controller
             'title' => 'required',
             'description' => 'required'
         ]);
-
-        $attributes['owner_id'] = auth()->user()->id;
-
-        //persitce
-        Project::create($attributes);
+        
+        //persist
+        //call relation as method so we can query to db (its a query builder)
+        Auth::user()->projects()->create($attributes);
 
         //redirect
         return redirect('/projects');

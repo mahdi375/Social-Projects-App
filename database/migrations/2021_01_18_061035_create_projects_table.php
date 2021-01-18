@@ -19,7 +19,10 @@ class CreateProjectsTable extends Migration
             $table->string('title');
             $table->text('description');
             $table->timestamps();
+
+            $table->foreign('owner_id')->references('id')->on('users');
         });
+
     }
 
     /**
