@@ -19,7 +19,7 @@ class ProjectTest extends TestCase
     }
 
     /** @test */
-    public function a_project_has_owner()
+    public function a_project_belongsTo_an_owner()
     {
         $project = factory(Project::class)->create();
 

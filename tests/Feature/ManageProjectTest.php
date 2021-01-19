@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class ProjectTest extends TestCase
+class ManageProjectTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
@@ -22,11 +22,31 @@ class ProjectTest extends TestCase
             'description' => $this->faker()->paragraph(3)
         ];
 
+        $this->get("/projects/create")->assertOk();
+
         $this->post('/projects', $attributes)->assertRedirect('/projects');
 
         $this->assertDatabaseHas('projects', $attributes);
 
         $this->get('/projects')->assertSee($attributes['title']);
+    }
+
+    /** @test */
+    public function guests_can_not_manage_project()
+    {
+        $project = factory(Project::class)->create();
+
+        //cant see create page
+        $this->get('/projects/create')->assertRedirect('/login');
+
+        //cant create
+        $this->post('/projects', $project->toArray())->assertRedirect('/login');
+
+        //cant see one (show)
+        $this->get($project->path())->assertRedirect('/login');
+
+        //cant see all (index)
+        $this->get('/projects')->assertRedirect('/login');
     }
 
     /** @test */
@@ -46,25 +66,30 @@ class ProjectTest extends TestCase
 
         $this->post('/projects', $attributes)->assertSessionHasErrors(['description']);  
     }
-    
-    /** @test */
-    public function guests_can_not_create_project()
-    {
-        $attributes = factory(Project::class)->raw();
-        $this->post('/projects', $attributes)->assertRedirect('/login');
-    }
 
     /** @test */
-    public function a_user_can_view_a_project()
+    public function a_user_can_only_see_their_project()
     {
-        $project = factory(Project::class)->create();
+        
+        $user = factory(User::class)->create();
+        $this->actingAs($user);
 
-        $this->get("/projects/{$project->id}")->assertRedirect('/login');
+        $theirProj = factory(Project::class)->create(['owner_id'=>$user->id]);
+        $otherProj = factory(Project::class)->create();
 
-        $this->actingAs(factory(User::class)->create());
+        //can see their project
+        $this->get($theirProj->path())
+            ->assertOk()
+            ->assertSee($theirProj->title);
 
-        $this->get("/projects/{$project->id}")
-            ->assertSee($project->title)
-            ->assertSee($project->description);
+        //can see only their projects
+        $this->get('/projects')
+            ->assertSee($theirProj->title)
+            ->assertDontSee($otherProj->title);
+
+        //can not see project of other user
+        $this->get($otherProj->path())
+            ->assertForbidden();
     }
+
 }
