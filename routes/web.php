@@ -26,9 +26,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/projects', 'ProjectsController@index');
     Route::get('/projects/{project}', 'ProjectsController@show');
 
-    //create ProjectTasksController for tast management
+    Route::post('/projects/{project}/tasks', 'ProjectTasksController@store');
 
 });
+
 
 Auth::routes();
 

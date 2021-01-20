@@ -9,7 +9,11 @@
     </div>
 
     <div class="container p_3 bc_milky rounded_3 mt_3 shadow_1">
-        Tasks
+        <ul>
+            @foreach ($project->tasks as $task)
+                <li>{{$task->body}}</li>
+            @endforeach
+        </ul>
     </div>
 
 </div>

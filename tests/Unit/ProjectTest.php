@@ -5,11 +5,12 @@ namespace Tests\Unit;
 use App\Project;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ProjectTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
     /** @test */
     public function a_project_has_path()
     {
@@ -24,5 +25,14 @@ class ProjectTest extends TestCase
         $project = factory(Project::class)->create();
 
         $this->assertInstanceOf(User::class, $project->owner);
+    }
+
+    /** @test */
+    public function it_can_add_a_task()
+    {
+        $project = factory(Project::class)->create();
+        $task = ['body' => $this->faker()->sentence()];
+        $task = $project->addTask($task);
+        $this->assertTrue($project->tasks->contains($task));
     }
 }

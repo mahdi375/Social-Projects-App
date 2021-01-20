@@ -15,8 +15,7 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function a_user_can_create_a_project()
     {
-        $this->actingAs(factory(User::class)->create());
-        
+        $this->signIn();
         $attributes = [
             'title' => $this->faker()->sentence(4),
             'description' => $this->faker()->paragraph(3)
@@ -52,7 +51,7 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function a_title_is_required_to_create_a_project()
     {
-        $this->actingAs(factory(User::class)->create());
+        $this->signIn();
         $attributes = factory(Project::class)->raw(['title' => null]);
 
         $this->post('/projects', $attributes)->assertSessionHasErrors(['title']);
@@ -61,7 +60,7 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function a_description_is_required_to_create_a_project()
     {
-        $this->actingAs(factory(User::class)->create());
+        $this->signIn();
         $attributes = factory(Project::class)->raw(['description' => null]);
 
         $this->post('/projects', $attributes)->assertSessionHasErrors(['description']);  
@@ -71,8 +70,7 @@ class ManageProjectTest extends TestCase
     public function a_user_can_only_see_their_project()
     {
         
-        $user = factory(User::class)->create();
-        $this->actingAs($user);
+        $user = $this->signIn();
 
         $theirProj = factory(Project::class)->create(['owner_id'=>$user->id]);
         $otherProj = factory(Project::class)->create();
