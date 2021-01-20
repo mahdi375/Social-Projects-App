@@ -1,19 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    <ul>
-        @forelse ($projects as $project)
-            <li><a href="{{$project->path()}}">{{$project->title}}</a></li>
-        @empty
-            <li>There is not any project yet</li>
-        @endforelse
-        
-    </ul>
-</body>
-</html>
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1 class="text_xl my_3">Projects</h1>
+
+    <div class="container p_3 bc_milky rounded_3 shadow_1">
+        <ul class="no_list_style pb_3">
+            @forelse ($projects as $project)
+                <li class="mt_3"><a class="no_decoration text_lg" href="{{$project->path()}}">{{$project->title}}</a></li>
+            @empty
+                <li>Not any project yet</li>
+            @endforelse 
+            
+        </ul>
+    </div>
+</div>
+@endsection

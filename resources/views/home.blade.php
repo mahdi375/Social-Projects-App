@@ -1,23 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Dashboard</div>
+<div class="conteiner p_4">
+    <h1 class="text_xl">Dashboard</h1>
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    You are logged in!
-                </div>
+    <div class="mt_4 bc_milky w100 p_4 shadow_2 rounded_3">
+        @if (session('status'))
+            <div role="alert">
+                {{ session('status') }}
             </div>
-        </div>
+        @endif
+
+        <span>Welcome to Whiteboard website :)</span>
     </div>
+            
 </div>
 @endsection

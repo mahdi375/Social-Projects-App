@@ -1,14 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    <h1>{{$project->title}}</h1>
-    <p>{{$project->description}}</p>
-    <span>By = > {{$project->owner->name}}</span>
-</body>
-</html>
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1 class="text_xl my_3">{{$project->title}}</h1>
+
+    <div class="container p_3 bc_milky rounded_3 shadow_1">
+        <p class="text_lg">{{$project->description}}</p>
+    </div>
+
+    <div class="container p_3 bc_milky rounded_3 mt_3 shadow_1">
+        Tasks
+    </div>
+
+</div>
+@endsection
