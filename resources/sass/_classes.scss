@@ -34,8 +34,14 @@
     box-sizing: border-box;
 }
 
+.h100{
+    height: 100%;
+}
 .h2em{
     height: 2em;
+}
+.h3em{
+    height: 3em;
 }
 
 .text_sm{
@@ -49,6 +55,10 @@
 }
 .text_xl{
     font-size: x-large;
+}
+
+.text_skiny{
+    font-weight: lighter;
 }
 
 
@@ -91,10 +101,16 @@
 .bc_white{
     background-color: $white;
 }
+.bc_inherit{
+    background-color: inherit;
+}
 
 
 .text_white{
     color: $white;
+}
+.text_mutted{
+    color: $mutted;
 }
 .text_error{
     color: $red;
@@ -129,8 +145,14 @@
     border-radius: 0.9em;
 }
 
+.no_border{
+    border: none;
+}
 .border_1{
     border: 1px solid black;
+}
+.border_t1{
+    border-top: 1px solid black;
 }
 
 .shadow_1{

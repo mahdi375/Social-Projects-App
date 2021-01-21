@@ -1,0 +1,5 @@
+@ // projects.index  => show description in project card
+@ // home (dashboard) => user can add new project
+@ // project.show => modify Task to has check feature and update body of tasks
+
+---- commit "can update and checke Task now"

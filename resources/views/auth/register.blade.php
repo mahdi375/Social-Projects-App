@@ -62,7 +62,7 @@
 
                     <div class="my_2">
                         <div >
-                            <button class="btn_blue border_1 py_1 px_4 rounded_1 " type="submit">
+                            <button class="btn_blue border_1 py_1 px_4 rounded_1" type="submit">
                                 {{ __('Register') }}
                             </button>
                         </div>

@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="conteiner p_4">
-    <h1 class="text_xl">Dashboard</h1>
 
     <div class="mt_4 bc_milky w100 p_4 shadow_2 rounded_3">
         @if (session('status'))
@@ -11,7 +10,25 @@
             </div>
         @endif
 
-        <span>Welcome to Whiteboard website :)</span>
+        <span class="text_xl">Welcome to Whiteboard website :)</span>
+        <div class="w50">
+            <h3 class="my_2 pt_2 border_t1">Add New Project</h3>
+            <form class="flex_column w100" action="{{route('ProjectsStore')}}" method="POST">
+                @csrf
+                <div >
+                    <label for="title">Project Tilte</label><br>
+                    <input class="mt_1 h2em rounded_1 w50 border_1" type="text" name="title" id="title">
+                </div>
+
+                <div class="mt_2">
+                    <label for="description">Project Description</label><br>
+                    <textarea class="mt_1 rounded_1 w50 border_1" name="description" id="description" cols="30" rows="10"></textarea>
+                </div>
+                <div>
+                    <button class="btn_blue border_1 py_1 px_4 rounded_1 ml_4 mt_3 ">Add Project</button>
+                </div>
+            </form>
+        </div>
     </div>
             
 </div>
