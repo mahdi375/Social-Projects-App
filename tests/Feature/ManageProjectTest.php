@@ -6,6 +6,8 @@ use App\Project;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Facades\Tests\Setup\ProjectSetup;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class ManageProjectTest extends TestCase
@@ -15,7 +17,6 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function a_user_can_create_a_project()
     {
-        // add notes
         $this->signIn();
         $attributes = [
             'title' => $this->faker()->sentence(4),
@@ -42,7 +43,6 @@ class ManageProjectTest extends TestCase
     public function a_user_can_update_a_project()
     {
         //update notes
-
     }
 
     /** @test */
@@ -54,7 +54,7 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function guests_can_not_manage_project()
     {
-        $project = factory(Project::class)->create();
+        $project = ProjectSetup::create();
 
         //cant see create page
         $this->get('/projects/create')->assertRedirect('/login');
@@ -74,7 +74,7 @@ class ManageProjectTest extends TestCase
     public function a_title_is_required_to_create_a_project()
     {
         $this->signIn();
-        $attributes = factory(Project::class)->raw(['title' => null]);
+        $attributes = ProjectSetup::raw(['title' => null]);
 
         $this->post('/projects', $attributes)->assertSessionHasErrors(['title']);
     }
@@ -83,7 +83,7 @@ class ManageProjectTest extends TestCase
     public function a_description_is_required_to_create_a_project()
     {
         $this->signIn();
-        $attributes = factory(Project::class)->raw(['description' => null]);
+        $attributes = ProjectSetup::raw(['description' => null]);
 
         $this->post('/projects', $attributes)->assertSessionHasErrors(['description']);  
     }
@@ -94,8 +94,8 @@ class ManageProjectTest extends TestCase
         
         $user = $this->signIn();
 
-        $theirProj = factory(Project::class)->create(['owner_id'=>$user->id]);
-        $otherProj = factory(Project::class)->create();
+        $theirProj = ProjectSetup::belongsTo($user)->create();
+        $otherProj = ProjectSetup::create();
 
         //can see their project
         $this->get($theirProj->path())

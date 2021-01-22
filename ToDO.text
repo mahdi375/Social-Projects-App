@@ -10,11 +10,12 @@
 @ // add ProjectPolicy instead of intermethod authorization ...
     -> if follow nameing convention. no need to register policies (doc: Policy Auto-Discovery)<-
 
----- commit "projects heve notes know, and a little refactoring
+---- commit "projects heve notes know, and a little refactoring"
 
-// test refactoring by using Class-Bassed Madel Factory
+@ // test refactoring by using Class-Bassed Madel Factory
+    -> we call it as facade (staticaly) so we must clear state after each call <-
 
-----
+---- commit "test refactoring using Class-Based Factories,was completed. Tanks to John Bonaccorsi"
 
 // ability to update title and description of projects (consider form duplication)
 

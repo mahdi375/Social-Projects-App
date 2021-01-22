@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
+use Facades\Tests\Setup\ProjectSetup;
 use Tests\TestCase;
 
 class ProjectTasksTest extends TestCase
@@ -15,7 +16,7 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_gust_can_not_add_task()
     {
-        $project = factory(Project::class)->create();
+        $project = ProjectSetup::create();
         $task = ['body' => $this->faker()->sentence()];
 
         $this->post($project->path().'/tasks', $task)->assertRedirect('/login');
@@ -24,14 +25,13 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function only_owner_of_project_can_add_tasks()
     {
-        //some refactoring can do here
-        $ownerUser = factory(User::class)->create();
-        $anotherUser = factory(User::class)->create();
+        $aUser = factory(User::class)->create();
 
-        $project = factory(Project::class)->create(['owner_id' => $ownerUser->id]);
+        $project = ProjectSetup::create();
+
         $task = ['body' => $this->faker()->sentence()];
 
-        $this->actingAs($anotherUser)
+        $this->actingAs($aUser)
             ->post($project->path().'/tasks', $task)
             ->assertForbidden();
         $this->assertDatabaseMissing('tasks', $task);
@@ -40,10 +40,9 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_project_can_has_task()
     {
-        $this->withoutExceptionHandling();
         //Given
         $user = $this->signIn();
-        $project = factory(Project::class)->create(['owner_id' => $user->id]);
+        $project = ProjectSetup::belongsTo($user)->create();
 
         //When
         $task = ['body' => $this->faker()->sentence()];
@@ -59,12 +58,11 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_task_required_a_body()
     {
-        $user = factory(User::class)->create();
+        $project = ProjectSetup::create();
 
-        $project = factory(Project::class)->create(['owner_id' => $user->id]);
         $task = ['body' => ''];
 
-        $this->actingAs($user)
+        $this->actingAs($project->owner)
             ->post($project->path().'/tasks', $task)
             ->assertSessionHasErrors(['body']);
         $this->assertDatabaseMissing('tasks', $task);
@@ -74,10 +72,13 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_task_can_be_updated_and_body_is_required()
     {
-        $this->signIn();
-        $project = Auth::user()->projects()->create(factory(Project::class)->raw());
-        $task = $project->addTask(['body' => 'old body']);
-        
+        $project = ProjectSetup::withTask(1, ['body' => 'old body'])
+            ->create();
+
+        $this->signIn($project->owner);
+
+        $task = $project->tasks->first();
+
         $this->patch($task->path(), [
             'body' => '',
             'checked' => 'checked'
@@ -89,6 +90,7 @@ class ProjectTasksTest extends TestCase
         ]);
 
         $response->assertRedirect($project->path());
+
         $task->refresh();
         
         $this->assertEquals('new body', $task->body);
@@ -98,13 +100,12 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function only_owner_of_project_can_update_tasks()
     {
+        $project = ProjectSetup::withTask(1, ['body' => 'old body'])
+            ->create();
+
         $this->signIn();
-        $project = Auth::user()->projects()->create(factory(Project::class)->raw());
-        
-        $task = $project->addTask(['body' => 'old body']);
-        
-        $this->signIn();
-        $response = $this->patch($task->path(), [
+
+        $response = $this->patch($project->tasks[0]->path(), [
             'body' => 'new body',
             'checked' => 'checked'
         ]);

@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Project;
 use App\User;
+use Facades\Tests\Setup\ProjectSetup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -14,7 +15,7 @@ class ProjectTest extends TestCase
     /** @test */
     public function a_project_has_path()
     {
-        $project = factory(Project::class)->create();
+        $project = ProjectSetup::create();
 
         $this->assertEquals("/projects/{$project->id}", $project->path());
     }
@@ -23,7 +24,7 @@ class ProjectTest extends TestCase
     public function a_project_has_notes()
     {
         $attributes = ['notes' => $this->faker()->sentence()];
-        $project = factory(Project::class)->create($attributes);
+        $project = ProjectSetup::create($attributes);
 
         $this->assertDatabaseHas('projects', $project->toArray());
         $this->assertEquals($attributes['notes'], $project->notes);
@@ -32,7 +33,7 @@ class ProjectTest extends TestCase
     /** @test */
     public function a_project_belongsTo_an_owner()
     {
-        $project = factory(Project::class)->create();
+        $project = ProjectSetup::create();
 
         $this->assertInstanceOf(User::class, $project->owner);
     }
@@ -40,7 +41,7 @@ class ProjectTest extends TestCase
     /** @test */
     public function it_can_add_a_task()
     {
-        $project = factory(Project::class)->create();
+        $project = ProjectSetup::create();
         $task = ['body' => $this->faker()->sentence()];
         $task = $project->addTask($task);
         $this->assertTrue($project->tasks->contains($task));
