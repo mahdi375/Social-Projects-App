@@ -13,7 +13,9 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        // 'App\Model' => 'App\Policies\ModelPolicy',
+        // if follow nameing convention. no need to register policies
+        // so the following lind is not needed ;)
+        'App\Project' => 'App\Policies\ProjectPolicy',
     ];
 
     /**

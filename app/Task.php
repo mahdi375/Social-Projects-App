@@ -10,6 +10,8 @@ class Task extends Model
 
     protected $dates = ['checked_at'];
 
+    protected $touches = ['project'];
+
     public function project()
     {
         return $this->belongsTo(Project::class);

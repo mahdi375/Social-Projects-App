@@ -11,20 +11,16 @@ class ProjectTasksController extends Controller
 {
     public function store(Project $project)
     {
-        if(Auth::user()->isNot($project->owner)){
-            abort(403);
-        }
+        $this->authorize('update', $project);
         $task = request()->validate(['body' => 'required']);
-        $project->addTask(request(['body']));
+        $project->addTask($task);
         
         return redirect($project->path());
     }
 
     public function update(Project $project, Task $task)
     {
-        if(Auth::user()->isNot($project->owner)){
-            abort(403);
-        }
+        $this->authorize('update', $project);
         request()->validate([
             'body' => 'required',
             'checked' => 'sometimes'

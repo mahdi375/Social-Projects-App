@@ -25,7 +25,8 @@ class ProjectsController extends Controller
         //validate
         $attributes = request()->validate([
             'title' => 'required',
-            'description' => 'required'
+            'description' => 'required',
+            'notes' => 'sometimes|string'
         ]);
         
         //persist
@@ -38,9 +39,8 @@ class ProjectsController extends Controller
 
     public function show(Project $project)
     {
-        if(auth()->user()->isNot($project->owner)){
-            return abort(403);
-        }
+        $this->authorize('update', $project);
+
         $project->load('tasks');
         
         return view('projects.show', compact('project'));

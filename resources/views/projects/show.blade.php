@@ -2,13 +2,13 @@
 
 @section('content')
 <div class="container">
-    <h1 class="text_xl my_3">{{$project->title}}</h1>
-
     <div class="container p_3 bc_milky rounded_3 shadow_1">
-        <p class="text_lg">{{$project->description}}</p>
+        <h1 id="title" class="text_xl mb_2">{{$project->title}}</h1>
+
+        <p id="description" class="text_lg ml_3">{{$project->description}}</p> 
     </div>
 
-    <div class="container p_3 bc_milky rounded_3 mt_3 shadow_1">
+    <div id="tasks" class="container p_3 bc_milky rounded_3 mt_3 shadow_1">
         <h2 class="text_xl text_skiny mb_1">Project Tasks: </h2>
         <ul class="no_list_style">
             @foreach ($project->tasks as $task)
@@ -32,6 +32,17 @@
                     </form>
                 </li>
         </ul>
+    </div>
+
+    <div id="notes" class="container p_3 bc_milky rounded_3 mt_3 shadow_1">
+        <h2 class="text_xl text_skiny mb_1">Project Notes: </h2>
+        <form action="" class="w100">
+            <textarea name="notes" placeholder="Add Notes ..." id="" cols="30" rows="10"
+                class="w50 ml_3 rounded_2 shadow_1 p_1"
+                >{{$project->notes}}</textarea><br>
+
+            <button class="btn_blue border_1 py_1 px_4 rounded_1 ml_4 mt_3 ">Send Notes</button>
+        </form>
     </div>
 
 </div>

@@ -20,6 +20,16 @@ class ProjectTest extends TestCase
     }
 
     /** @test */
+    public function a_project_has_notes()
+    {
+        $attributes = ['notes' => $this->faker()->sentence()];
+        $project = factory(Project::class)->create($attributes);
+
+        $this->assertDatabaseHas('projects', $project->toArray());
+        $this->assertEquals($attributes['notes'], $project->notes);
+    }
+
+    /** @test */
     public function a_project_belongsTo_an_owner()
     {
         $project = factory(Project::class)->create();

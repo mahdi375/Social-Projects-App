@@ -3,3 +3,19 @@
 @ // project.show => modify Task to has check feature and update body of tasks
 
 ---- commit "can update and checke Task now"
+
+@ // task update touch its parent (project) updated_at column
+@ // sort projects card in projects.index by updated_at column  (@relation->latest('updated_at'))
+@ // add notes column to project (add it on dashboard and project page too ... )
+@ // add ProjectPolicy instead of intermethod authorization ...
+    -> if follow nameing convention. no need to register policies (doc: Policy Auto-Discovery)<-
+
+---- commit "projects heve notes know, and a little refactoring
+
+// test refactoring by using Class-Bassed Madel Factory
+
+----
+
+// ability to update title and description of projects (consider form duplication)
+
+

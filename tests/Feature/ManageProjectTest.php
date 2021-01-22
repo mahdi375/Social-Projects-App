@@ -15,10 +15,12 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function a_user_can_create_a_project()
     {
+        // add notes
         $this->signIn();
         $attributes = [
             'title' => $this->faker()->sentence(4),
-            'description' => $this->faker()->paragraph(3)
+            'description' => $this->faker()->paragraph(2),
+            'notes' => $this->faker()->sentence(6),
         ];
 
         $this->get("/projects/create")->assertOk();
@@ -27,7 +29,26 @@ class ManageProjectTest extends TestCase
 
         $this->assertDatabaseHas('projects', $attributes);
 
+        $project = Project::all()->first();
+
+        $this->get($project->path())
+            ->assertSee($attributes['title'])
+            ->assertSee($attributes['description'])
+            ->assertSee($attributes['notes']);
         $this->get('/projects')->assertSee($attributes['title']);
+    }
+
+    /** @test */
+    public function a_user_can_update_a_project()
+    {
+        //update notes
+
+    }
+
+    /** @test */
+    public function a_user_can_only_update_their_project()
+    {
+        
     }
 
     /** @test */
@@ -41,6 +62,7 @@ class ManageProjectTest extends TestCase
         //cant create
         $this->post('/projects', $project->toArray())->assertRedirect('/login');
 
+        //cant update
         //cant see one (show)
         $this->get($project->path())->assertRedirect('/login');
 
