@@ -9,6 +9,19 @@ class Project extends Model
 
     protected $guarded = [];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::created(function($project){
+            $project->recordActivity('created');
+        });
+
+        self::updated(function($project){
+            $project->recordActivity('updated');
+        });
+    }
+
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
@@ -29,5 +42,12 @@ class Project extends Model
         return $this->tasks()->create($task);
     }
 
+    public function recordActivity($description)
+    {
+        return ProjectActivity::create([
+            'project_id' => $this->id,
+            'description' => $description
+        ]);
+    }
 
 }

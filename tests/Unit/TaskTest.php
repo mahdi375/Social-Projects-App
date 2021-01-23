@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Project;
+use App\Task;
 use Facades\Tests\Setup\ProjectSetup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -28,5 +29,21 @@ class TaskTest extends TestCase
             ->create();
 
         $this->assertEquals("{$project->path()}/tasks/{$project->tasks[0]->id}", $project->tasks[0]->path());
+    }
+
+    /** @test */
+    public function it_can_checked_and_unchecked()
+    {
+        $task = factory(Task::class)->create();
+
+        $this->assertFalse($task->wasChecked());
+
+        $task->check();
+
+        $this->assertTrue($task->wasChecked());
+        
+        $task->uncheck();
+        
+        $this->assertFalse($task->wasChecked());
     }
 }

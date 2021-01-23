@@ -26,12 +26,19 @@ class ProjectTasksController extends Controller
             'body' => 'required',
             'checked' => 'sometimes'
         ]);
-        $data = [
-            'body' => request('body'),
-            'checked_at' => request('checked') ? now() : null,
-        ];
 
-        $task->update($data);
+        request('checked') ? $task->check() : $task->uncheck();
+
+        $task->update(request(['body']));
+
+        return redirect($project->path());
+    }
+
+    public function destroy(Project $project, Task $task)
+    {
+        $this->authorize('update', $project);
+        
+        $task->delete();
 
         return redirect($project->path());
     }

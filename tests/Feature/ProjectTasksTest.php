@@ -14,12 +14,15 @@ class ProjectTasksTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
     /** @test */
-    public function a_gust_can_not_add_task()
+    public function a_gust_can_not_manage_task()
     {
-        $project = ProjectSetup::create();
+        $project = ProjectSetup::withTask()->create();
         $task = ['body' => $this->faker()->sentence()];
 
+        // request for adding new test
         $this->post($project->path().'/tasks', $task)->assertRedirect('/login');
+        // request for deleting existed task
+        $this->delete($project->tasks[0]->path())->assertRedirect('/login');
     }
 
     /** @test */
@@ -101,8 +104,18 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_task_can_marked_as_incomplete()
     {
-        // not checked  (checked to unchecked)
-        
+        $project = ProjectSetup::withTask(1)->create();
+        $task = $project->tasks[0];
+        $this->signIn($project->owner);
+        $task->check();
+        $this->assertTrue($task->wasChecked());
+
+        $data = [
+            'body' => $task->body,
+        ];
+        $this->patch($task->path(), $data);
+
+        $this->assertFalse($task->fresh()->wasChecked());
     }
     /** @test */
     public function only_owner_of_project_can_update_tasks()
@@ -118,5 +131,22 @@ class ProjectTasksTest extends TestCase
         ]);
 
         $response->assertForbidden();    
+    }
+
+    /** @test */
+    public function project_owner_can_delete_task()
+    {
+        $project = ProjectSetup::withTask()->create();
+        $task = $project->tasks[0];
+
+        $this->actingAs(factory(User::class)->create())
+            ->delete($task->path())
+            ->assertForbidden();
+        
+        $this->actingAs($project->owner)
+            ->delete($task->path())
+            ->assertRedirect($project->path());
+        
+        $this->assertDatabaseMissing('tasks', $task->toArray());
     }
 }
