@@ -72,6 +72,7 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_task_can_be_updated_and_body_is_required()
     {
+        //break it to three test (update_body, completed (checked) , body_required )
         $project = ProjectSetup::withTask(1, ['body' => 'old body'])
             ->create();
 
@@ -97,6 +98,12 @@ class ProjectTasksTest extends TestCase
         $this->assertTrue($task->wasChecked());
     }
 
+    /** @test */
+    public function a_task_can_marked_as_incomplete()
+    {
+        // not checked  (checked to unchecked)
+        
+    }
     /** @test */
     public function only_owner_of_project_can_update_tasks()
     {

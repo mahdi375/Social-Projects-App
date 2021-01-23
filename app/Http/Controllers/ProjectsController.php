@@ -26,7 +26,7 @@ class ProjectsController extends Controller
         $attributes = request()->validate([
             'title' => 'required',
             'description' => 'required',
-            'notes' => 'sometimes|string'
+            'notes' => 'nullable|string'
         ]);
         
         //persist
@@ -44,5 +44,40 @@ class ProjectsController extends Controller
         $project->load('tasks');
         
         return view('projects.show', compact('project'));
+    }
+
+    public function edit(Project $project)
+    {
+        $this->authorize('update', $project);
+        
+        return view('projects.edit', compact('project'));
+    }
+
+    public function update(Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $attributes = request()->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'notes' => 'nullable|string'
+        ]);
+
+        $project->update($attributes);
+
+        return redirect($project->path());
+    }
+
+    public function updateNotes(Project $project)
+    {
+        $this->authorize('update', $project);
+        
+        $data = request()->validate([
+            'notes' => 'nullable|string'
+        ]);
+
+        $project->update($data);
+
+        return redirect($project->path());
     }
 }

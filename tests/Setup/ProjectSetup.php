@@ -29,9 +29,13 @@ class ProjectSetup
         return $this;
     }
 
-    public function raw($attributes)
+    public function raw($attributes = [])
     {
-        return factory(Project::class)->raw($attributes);
+        
+        $attributes = factory(Project::class)->raw($attributes);
+        unset($attributes['owner_id']);
+
+        return $attributes;
     }
 
     public function create($attributes = [])

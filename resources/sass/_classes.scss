@@ -29,6 +29,10 @@
     width: 50%;
     box-sizing: border-box;
 }
+.w75{
+    width: 50%;
+    box-sizing: border-box;
+}
 .w100{
     width: 100%;
     box-sizing: border-box;
@@ -122,6 +126,14 @@
     color: $white;
     &:hover{
         background-color: $blue;
+        cursor: pointer;
+    }
+}
+.btn_orange{
+    background-color: $orange;
+    color: $white;
+    &:hover{
+        background-color: $dark-orange;
         cursor: pointer;
     }
 }

@@ -42,13 +42,58 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function a_user_can_update_a_project()
     {
-        //update notes
+        $this->withoutExceptionHandling();
+        
+        $project = ProjectSetup::create();
+        $this->signIn($project->owner);
+
+        $this->get($project->path().'/edit')
+            ->assertSee($project->title)
+            ->assertSee($project->description)
+            ->assertSee($project->notes);
+        
+        $newAtt = [
+            'title' => 'Title CHANGED',
+            'description' => 'Description CHANGED',
+            'notes' => null,
+        ];
+        
+        $this->patch($project->path(), $newAtt)
+            ->assertRedirect($project->path()); 
+        
+        $this->assertDatabaseHas('projects', $newAtt);
     }
+    
+    /** @test */
+    public function a_user_can_update_project_notes_it_can_be_empty()
+    {
+        $this->withoutExceptionHandling();
+
+        $project = ProjectSetup::create();
+        $this->signIn($project->owner);
+
+        $data = ['notes' => 'Changed Note'];
+
+        $this->patch($project->path().'/notes', $data)
+            ->assertRedirect($project->path());
+            
+        $this->assertEquals($data['notes'], $project->fresh()->notes);
+
+        $this->patch($project->path().'/notes', ['notes' => '']);
+        $this->assertEquals('', $project->fresh()->notes);
+    }
+
+
 
     /** @test */
     public function a_user_can_only_update_their_project()
     {
-        
+        $user = $this->signIn();
+        $project = ProjectSetup::create();
+
+        $this->get($project->path().'/edit')->assertForbidden();
+        $this->patch($project->path(), ProjectSetup::raw())->assertForbidden();
+        $this->patch($project->path().'/notes')->assertForbidden();
     }
 
     /** @test */
@@ -62,7 +107,12 @@ class ManageProjectTest extends TestCase
         //cant create
         $this->post('/projects', $project->toArray())->assertRedirect('/login');
 
-        //cant update
+        //cant update 
+        $this->get($project->path().'/edit')->assertRedirect('/login');
+        $this->patch($project->path(), ProjectSetup::raw())->assertRedirect('/login');
+        $this->patch($project->path().'/notes', ['notes' => 'Changed'])->assertRedirect('/login');
+
+
         //cant see one (show)
         $this->get($project->path())->assertRedirect('/login');
 
@@ -71,21 +121,27 @@ class ManageProjectTest extends TestCase
     }
 
     /** @test */
-    public function a_title_is_required_to_create_a_project()
+    public function a_title_is_required_to_create_and_update_a_project()
     {
-        $this->signIn();
+        $user = $this->signIn();
         $attributes = ProjectSetup::raw(['title' => null]);
 
         $this->post('/projects', $attributes)->assertSessionHasErrors(['title']);
+    
+        $project = ProjectSetup::belongsTo($user)->create();
+        $this->patch($project->path(), $attributes)->assertSessionHasErrors(['title']);  
     }
     
     /** @test */
-    public function a_description_is_required_to_create_a_project()
+    public function a_description_is_required_to_create_and_update_a_project()
     {
-        $this->signIn();
+        $user = $this->signIn();
         $attributes = ProjectSetup::raw(['description' => null]);
 
-        $this->post('/projects', $attributes)->assertSessionHasErrors(['description']);  
+        $this->post('/projects', $attributes)->assertSessionHasErrors(['description']);
+
+        $project = ProjectSetup::belongsTo($user)->create();
+        $this->patch($project->path(), $attributes)->assertSessionHasErrors(['description']);  
     }
 
     /** @test */

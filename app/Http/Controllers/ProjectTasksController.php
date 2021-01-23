@@ -20,6 +20,7 @@ class ProjectTasksController extends Controller
 
     public function update(Project $project, Task $task)
     {
+        // this queries should placed in model
         $this->authorize('update', $project);
         request()->validate([
             'body' => 'required',
