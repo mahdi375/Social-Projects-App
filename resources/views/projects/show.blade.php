@@ -40,18 +40,26 @@
         </ul>
     </div>
 
-    <div id="notes" class="container p_3 bc_milky rounded_3 mt_3 shadow_1">
-        <h2 class="text_xl text_skiny mb_1">Project Notes: </h2>
-        <form action="{{$project->path().'/notes'}}" method="POST" class="w100">
-            @csrf
-            @method('PATCH')
-            <textarea name="notes" placeholder="Add Notes ..." id="" cols="30" rows="10"
-                class="w50 ml_3 rounded_2 shadow_1 p_1"
-                >{{$project->notes}}</textarea><br>
+    <div id="additions" class="flex_row container justify_between p_3 bc_milky rounded_3 mt_3 shadow_1">
+        
+        <div id="notes" class="w75">
+            <h2 class="text_xl text_skiny mb_1">Project Notes: </h2>
+            <form action="{{$project->path().'/notes'}}" method="POST" >
+                @csrf
+                @method('PATCH')
+                <textarea name="notes" placeholder="Add Notes ..." id="" cols="30" rows="10"
+                    class="w100 ml_3 rounded_2 shadow_1 p_1"
+                    >{{$project->notes}}</textarea><br>
 
-            <button class="btn_blue border_1 py_1 px_4 rounded_1 ml_4 mt_3 "
-                >Edit Notes</button>
-        </form>
+                <button class="btn_blue border_1 py_1 px_4 rounded_1 ml_4 mt_3 "
+                    >Edit Notes</button>
+            </form>
+        </div>
+
+        <div id="activities" class="w25 ">
+            @include('projects.activity.card', compact('project'))
+        </div>
+
     </div>
 
 </div>

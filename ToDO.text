@@ -23,12 +23,20 @@
 ---- commit "now we can update projects on show page and on edit page, form duplication considered"
 
 @ // add Activity piece  having 'description', 'owner_id', ...
-// create observer for Project and then record Activities on that
 @ // try to centerize creating Activities to unique place (method on Project model or ...)
 // check your Activity creation by thinker
 @ // be care about checking Task, be sure that is fully tested !
 
 ---- commit "tests about ProjectActivity was created and passed :)"
 
+// create observer for Project and Task, then record Activities on that
+@ // show Activities an show page (use polymorphism of views :) )
+@ // extract some parts of your views like forms, Activities section , ...
+
+// add subject to Activity and make it Morph relation to another. dont remove project_id column !!!!
+// show title or body or ... of subject of activities on show page
+// store changes for activities, think about how to receive before and after states :-) ...
+
+---- commit "activities are shown on projects.show page"
 
 

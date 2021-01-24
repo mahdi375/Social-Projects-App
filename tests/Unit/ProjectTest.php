@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Project;
+use App\ProjectActivity;
 use App\User;
 use Facades\Tests\Setup\ProjectSetup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -45,5 +46,14 @@ class ProjectTest extends TestCase
         $task = ['body' => $this->faker()->sentence()];
         $task = $project->addTask($task);
         $this->assertTrue($project->tasks->contains($task));
+    }
+
+    /** @test */
+    public function it_has_many_activities()
+    {
+        $this->withoutExceptionHandling();
+        $project = ProjectSetup::create();
+
+        $this->assertInstanceOf(ProjectActivity::class, $project->activities->first());
     }
 }

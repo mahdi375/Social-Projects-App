@@ -15,6 +15,7 @@ class RecordActivityTest extends TestCase
     /** @test */
     public function creating_project()
     {
+        // should check subject too
         ProjectSetup::create();
 
         $this->assertCount(1, ProjectActivity::all());
@@ -24,6 +25,16 @@ class RecordActivityTest extends TestCase
     /** @test */
     public function updating_project()
     {
+        // test morph relation too
+        /** add chenges column too  
+         * $expected = [
+         *  'before' => ['title' => '....'],
+         *  'after' => ['title' => '++++'],
+         *  ];
+         * 
+         * $activity->changes = $expected
+         * 
+         */
         $project = ProjectSetup::create();
 
         $data = ProjectSetup::raw();
@@ -40,6 +51,7 @@ class RecordActivityTest extends TestCase
     /** @test */
     public function creating_new_task()
     {
+        // check morph relation and created task too...
         ProjectSetup::withTask(1)->create();
         
         $activities = ProjectActivity::all();
@@ -51,6 +63,7 @@ class RecordActivityTest extends TestCase
     /** @test */
     public function checking_task()
     {
+        // test morph relation too
         $project = ProjectSetup::withTask(1)->create();
         $task = $project->tasks[0];
         $this->signIn($project->owner);
@@ -72,6 +85,8 @@ class RecordActivityTest extends TestCase
     /** @test */
     public function unchecking_task()
     {
+        // test morph relation too
+        
         $project = ProjectSetup::withTask(1)->create();
         $task = $project->tasks[0];
         $this->signIn($project->owner);
