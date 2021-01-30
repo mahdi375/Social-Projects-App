@@ -27,7 +27,6 @@ class ProjectTest extends TestCase
         $attributes = ['notes' => $this->faker()->sentence()];
         $project = ProjectSetup::create($attributes);
 
-        $this->assertDatabaseHas('projects', $project->toArray());
         $this->assertEquals($attributes['notes'], $project->notes);
     }
 

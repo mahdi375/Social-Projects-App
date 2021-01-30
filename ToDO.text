@@ -49,6 +49,7 @@
 
 // add user to activities and show change and user in projects.show ...
 
+----  commit "activities now have associated user :)"
 // ability to delete a project by it owner (also delete btn on show ...)
 
 // a scenario to able invite users to project
@@ -59,4 +60,4 @@
 // are you sure that user can see others projects in dashboard ?
 
 
-****** on RecordActivityTest->updating_project want to add changes ....
+******>> 

@@ -26,7 +26,13 @@ class ActivityTest extends TestCase
     /** @test */
     public function it_has_user()
     {
-        
+        $this->withoutExceptionHandling();
+
+        $naghee = $this->signIn();
+        $project = ProjectSetup::belongsTo($naghee)->create();
+
+        $activity = ProjectActivity::latest()->first();
+        $this->assertTrue($activity->user->is($naghee));
     }
 
 }

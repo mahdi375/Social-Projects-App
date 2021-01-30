@@ -3,6 +3,7 @@ namespace App\Traites;
 
 use App\ProjectActivity;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 trait RecordActivity
@@ -40,6 +41,7 @@ trait RecordActivity
     public function recordActivity($description)
     {
         return $this->activities()->create([
+            'user_id' => (Auth::user() ?? $this->project->owner ?? $this->owner)->id,
             'project_id' => $this->projectId(),
             'description' => $description,
             'changes' => $this->changes($description),

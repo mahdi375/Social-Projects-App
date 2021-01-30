@@ -28,7 +28,6 @@ class RecordActivityTest extends TestCase
     /** @test */
     public function updating_project()
     {
-        $this->withoutExceptionHandling();
         $project = ProjectSetup::create();
 
         $data = ProjectSetup::raw();
