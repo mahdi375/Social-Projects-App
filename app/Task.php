@@ -2,34 +2,25 @@
 
 namespace App;
 
+use App\Traites\RecordActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
+    use RecordActivity;
     protected $guarded = [];
 
     protected $dates = ['checked_at'];
 
     protected $touches = ['project'];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        // a way to listen to the model events (created, updated, ...)
-        static::created(function($task){
-            $task->project->recordActivity('task-added');
-        });
-
-        static::deleted(function($task){
-            $task->project->recordActivity('task-deleted');
-        });
-    }
+    protected static $recordableEvents = ['created', 'deleted'];
 
     public function project()
     {
         return $this->belongsTo(Project::class);
     }
+
     public function path()
     {
         return "{$this->project->path()}/tasks/{$this->id}";
@@ -49,7 +40,7 @@ class Task extends Model
         $this->update(['checked_at' => $state ? now() : null]);
         
         $activity = $state ? 'task-checked' : 'task-unchecked';
-        $this->project->recordActivity($activity);
+        $this->recordActivity($activity);
 
         return $this;
     }
@@ -61,4 +52,5 @@ class Task extends Model
     {
         return $this->check(false);
     }
+
 }

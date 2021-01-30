@@ -1,0 +1,1 @@
+{{$activity->subject->title}} was added

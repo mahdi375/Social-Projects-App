@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Project;
 use App\ProjectActivity;
+use App\Task;
 use Facades\Tests\Setup\ProjectSetup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -15,55 +17,68 @@ class RecordActivityTest extends TestCase
     /** @test */
     public function creating_project()
     {
-        // should check subject too
         ProjectSetup::create();
 
+        $activity = ProjectActivity::all()->last();
         $this->assertCount(1, ProjectActivity::all());
-        $this->assertEquals('created', ProjectActivity::all()->last()->description);
+        $this->assertEquals('project-created', $activity->description);
+        $this->assertInstanceOf(Project::class, $activity->subject);
     }
     
     /** @test */
     public function updating_project()
     {
-        // test morph relation too
-        /** add chenges column too  
-         * $expected = [
-         *  'before' => ['title' => '....'],
-         *  'after' => ['title' => '++++'],
-         *  ];
-         * 
-         * $activity->changes = $expected
-         * 
-         */
+        $this->withoutExceptionHandling();
         $project = ProjectSetup::create();
 
         $data = ProjectSetup::raw();
         $this->signIn($project->owner);
+        
+
         //update project as whole
         $this->patch($project->path(), $data);
+
+        $expected = [
+            'before' => [
+                'title' => $project->title,
+                'description' => $project->description
+            ],
+            'after' => [
+                'title' => $data['title'],
+                'description' => $data['description']
+            ],
+        ];
+        $activity =  ProjectActivity::all()->last();
+
+        $this->assertEquals($expected,$activity->changes);
+
+
         //update just 'notes'
         $this->patch($project->path().'/notes', ['notes' => 'changed']);
 
         $this->assertCount(3, ProjectActivity::all());
-        $this->assertEquals('updated', ProjectActivity::all()->last()->description);
+        $this->assertEquals('project-updated', ProjectActivity::all()->last()->description);
     }
 
     /** @test */
     public function creating_new_task()
     {
-        // check morph relation and created task too...
-        ProjectSetup::withTask(1)->create();
-        
+        $project = ProjectSetup::withTask(2)->create();
+        $this->signIn($project->owner);        
         $activities = ProjectActivity::all();
 
-        $this->assertCount(2, $activities);
-        $this->assertEquals('task-added', $activities->last()->description);
+        $this->assertCount(3, $activities);
+        $this->assertEquals('task-created', $activities->last()->description);
+        
+        // a bug in RecordActivity trait
+        $this->assertTrue($activities->last()->project->is($project));
+        $this->assertInstanceOf(Task::class, $activities->last()->subject);
+        $this->get($project->path())->assertSee('new task added');
     }
     
     /** @test */
     public function checking_task()
     {
-        // test morph relation too
         $project = ProjectSetup::withTask(1)->create();
         $task = $project->tasks[0];
         $this->signIn($project->owner);
@@ -79,14 +94,12 @@ class RecordActivityTest extends TestCase
 
         $this->assertCount(3, $activities);
         $this->assertEquals('task-checked', $activities->last()->description);
-        
+        $this->assertInstanceOf(Task::class, $activities->last()->subject);
     }
     
     /** @test */
     public function unchecking_task()
     {
-        // test morph relation too
-        
         $project = ProjectSetup::withTask(1)->create();
         $task = $project->tasks[0];
         $this->signIn($project->owner);
@@ -100,6 +113,7 @@ class RecordActivityTest extends TestCase
         $activities = ProjectActivity::all();
 
         $this->assertEquals('task-unchecked', $activities->last()->description);
+        $this->assertInstanceOf(Task::class, $activities->last()->subject);
     }
     
     /** @test */

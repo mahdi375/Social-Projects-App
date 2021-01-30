@@ -112,7 +112,8 @@ class ManageProjectTest extends TestCase
         $this->patch($project->path(), ProjectSetup::raw())->assertRedirect('/login');
         $this->patch($project->path().'/notes', ['notes' => 'Changed'])->assertRedirect('/login');
 
-
+        // cant delete
+        
         //cant see one (show)
         $this->get($project->path())->assertRedirect('/login');
 
@@ -166,6 +167,18 @@ class ManageProjectTest extends TestCase
         //can not see project of other user
         $this->get($otherProj->path())
             ->assertForbidden();
+    }
+
+    /** @test */
+    public function user_can_delete_his_owne_project()
+    {
+
+    }
+
+    /** @test */
+    public function user_can_see_projects_they_have_been_invited_to_in_dashboard()
+    {
+        
     }
 
 }

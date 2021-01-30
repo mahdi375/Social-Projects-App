@@ -22,4 +22,10 @@ class UserTest extends TestCase
 
         $this->assertInstanceOf(Project::class, $user->projects->first());
     }
+
+    /** @test */
+    public function a_use_has_accessible_projects()
+    {
+        // $user->projects + invitedProjects  ...
+    }
 }

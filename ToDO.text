@@ -33,10 +33,30 @@
 @ // show Activities an show page (use polymorphism of views :) )
 @ // extract some parts of your views like forms, Activities section , ...
 
-// add subject to Activity and make it Morph relation to another. dont remove project_id column !!!!
-// show title or body or ... of subject of activities on show page
-// store changes for activities, think about how to receive before and after states :-) ...
-
 ---- commit "activities are shown on projects.show page"
 
 
+@ // add subject to Activity and make it Morph relation to another. dont remove project_id column !!!!
+@ // show title or body or ... of subject of activities on show page
+@ // store changes for activities, think about how to receive before and after states :-) ...
+
+
+@ // create a trait for recording activities and .... 
+@ // move activity section on models and their Observers to that trait
+********* call events by public static function bootTraitName(){....} on trait
+
+---- commit "subject morph relation added to activity, and some refactoring on activity"
+
+// add user to activities and show change and user in projects.show ...
+
+// ability to delete a project by it owner (also delete btn on show ...)
+
+// a scenario to able invite users to project
+// invited user can add task to project
+
+// user should can see all projects they have been invited to in dashboard
+    ... $user->accessibleProject()
+// are you sure that user can see others projects in dashboard ?
+
+
+****** on RecordActivityTest->updating_project want to add changes ....

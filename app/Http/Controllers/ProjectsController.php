@@ -43,8 +43,10 @@ class ProjectsController extends Controller
         $this->authorize('update', $project);
 
         $project->load('tasks');
+        $activities = $project->getActivities()->limit(10)->get();
+        //$project->load('activities');
         
-        return view('projects.show', compact('project'));
+        return view('projects.show', compact('project', 'activities'));
     }
 
     public function edit(Project $project)

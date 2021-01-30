@@ -2,25 +2,15 @@
 
 namespace App;
 
+use App\Traites\RecordActivity;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Project extends Model
 {
-
+    use RecordActivity;
+    
     protected $guarded = [];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::created(function($project){
-            $project->recordActivity('created');
-        });
-
-        self::updated(function($project){
-            $project->recordActivity('updated');
-        });
-    }
 
     public function owner()
     {
@@ -32,10 +22,6 @@ class Project extends Model
         return $this->hasMany(Task::class);
     }
 
-    public function activities()
-    {
-        return $this->hasMany(ProjectActivity::class)->latest()->limit(10);
-    }
 
     public function path()
     {
@@ -45,14 +31,6 @@ class Project extends Model
     public function addTask(array $task)
     {
         return $this->tasks()->create($task);
-    }
-
-    public function recordActivity($description)
-    {
-        return ProjectActivity::create([
-            'project_id' => $this->id,
-            'description' => $description
-        ]);
     }
 
 }
