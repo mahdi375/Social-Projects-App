@@ -50,7 +50,10 @@
 // add user to activities and show change and user in projects.show ...
 
 ----  commit "activities now have associated user :)"
+
 // ability to delete a project by it owner (also delete btn on show ...)
+
+---- commit "delete project ability was added"
 
 // a scenario to able invite users to project
 // invited user can add task to project

@@ -27,7 +27,7 @@ trait RecordActivity
 
     public static function activityNames(){
         if(!isset(static::$recordableEvents)){
-            return ['created', 'deleted', 'updated'];
+            return ['created', 'updated'];
         }
 
         return static::$recordableEvents;

@@ -155,6 +155,16 @@
   cursor: pointer;
 }
 
+.btn_red {
+  background-color: #ff6e6ec7;
+  color: white;
+}
+
+.btn_red:hover {
+  background-color: #ff3434;
+  cursor: pointer;
+}
+
 .no_decoration {
   text-decoration: none;
 }

@@ -11,6 +11,11 @@
 
         <div class="mt_3  mr_4">
             <a href="{{ $project->path().'/edit'}}" class="no_decoration btn_orange py_1 px_3 rounded_1">Edit</a>
+            <form action="{{$project->path()}}" method="POST">
+                @csrf
+                @method('DELETE')
+                <button class="py_1 px_3 mt_2 rounded_1 no_border btn_red">Delete</button>
+            </form>
         </div>
     </div>
 

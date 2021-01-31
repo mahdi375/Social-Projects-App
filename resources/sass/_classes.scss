@@ -137,6 +137,15 @@
         cursor: pointer;
     }
 }
+.btn_red{
+    background-color: $light-red;
+    color: $white;
+    &:hover{
+        background-color: $red;
+        cursor: pointer;
+    }
+}
+
 
 // Others  =======================================================
 .no_decoration{

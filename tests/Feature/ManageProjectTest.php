@@ -113,6 +113,7 @@ class ManageProjectTest extends TestCase
         $this->patch($project->path().'/notes', ['notes' => 'Changed'])->assertRedirect('/login');
 
         // cant delete
+        $this->delete($project->path())->assertRedirect('/login');
         
         //cant see one (show)
         $this->get($project->path())->assertRedirect('/login');
@@ -172,7 +173,18 @@ class ManageProjectTest extends TestCase
     /** @test */
     public function user_can_delete_his_owne_project()
     {
+        $project1 = ProjectSetup::create();
+        $project2 = ProjectSetup::create();
+        $this->signIn($project1->owner);
 
+        $this->delete($project2->path())
+            ->assertForbidden();
+
+        $this->delete($project1->path())
+            ->assertRedirect(action('ProjectsController@index'));
+
+        $this->assertDatabaseHas('projects', $project2->only('id', 'title'));
+        $this->assertDatabaseMissing('projects', $project1->only('id', 'title'));
     }
 
     /** @test */

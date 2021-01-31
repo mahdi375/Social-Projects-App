@@ -23,10 +23,11 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/projects/create', "ProjectsController@create");
     Route::post('/projects', 'ProjectsController@store')->name('ProjectsStore');
-    Route::get('/projects', 'ProjectsController@index');
+    Route::get('/projects', 'ProjectsController@index')->name('ProjectsIndex');
     Route::get('/projects/{project}', 'ProjectsController@show');
     Route::get('/projects/{project}/edit', 'ProjectsController@edit');
     Route::patch('/projects/{project}', 'ProjectsController@update');
+    Route::delete('/projects/{project}', 'ProjectsController@destroy');
 
     Route::patch('/projects/{project}/notes', 'ProjectsController@updateNotes');
 
