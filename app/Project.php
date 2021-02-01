@@ -22,6 +22,11 @@ class Project extends Model
         return $this->hasMany(Task::class);
     }
 
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'project_member')->withTimestamps();
+    }
+
 
     public function path()
     {
@@ -31,6 +36,13 @@ class Project extends Model
     public function addTask(array $task)
     {
         return $this->tasks()->create($task);
+    }
+
+    public function invite(User $user)
+    {
+        $this->members()->attach($user);
+        
+        return $this;
     }
 
 }

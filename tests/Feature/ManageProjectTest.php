@@ -187,10 +187,4 @@ class ManageProjectTest extends TestCase
         $this->assertDatabaseMissing('projects', $project1->only('id', 'title'));
     }
 
-    /** @test */
-    public function user_can_see_projects_they_have_been_invited_to_in_dashboard()
-    {
-        
-    }
-
 }

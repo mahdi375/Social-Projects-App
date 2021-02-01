@@ -56,10 +56,4 @@ class ProjectTest extends TestCase
         $this->assertInstanceOf(ProjectActivity::class, $project->activities->first());
     }
 
-    /** @test */
-    public function it_can_invite_a_user()
-    {
-        // $project->invite($user)
-        // $project->members->contains($naghi) ....
-    }
 }

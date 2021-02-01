@@ -47,20 +47,29 @@
 
 ---- commit "subject morph relation added to activity, and some refactoring on activity"
 
-// add user to activities and show change and user in projects.show ...
+@ // add user to activities and show change and user in projects.show ...
 
 ----  commit "activities now have associated user :)"
 
-// ability to delete a project by it owner (also delete btn on show ...)
+@ // ability to delete a project by it owner (also delete btn on show ...)
 
 ---- commit "delete project ability was added"
 
-// a scenario to able invite users to project
-// invited user can add task to project
+@ // a scenario to able invite users to project
+@ // invited user can add task to project
+
+---- commit "two major invitation process tests passed"
 
 // user should can see all projects they have been invited to in dashboard
     ... $user->accessibleProject()
 // are you sure that user can see others projects in dashboard ?
 
+// add invited users list (+ their Gravatar) to project.show
+
+// dive deeper into Invitation
+// at the end make a form request on Invitation user (push authorization part on it by Gate...)
+
+// put an invitation form in project.show view
+// show this form just for project owner
 
 ******>> 

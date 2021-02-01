@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Project;
 use App\ProjectActivity;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -91,5 +92,12 @@ class ProjectsController extends Controller
         $project->delete();
 
         return redirect()->route('ProjectsIndex');
+    }
+
+    public function invite(Project $project)
+    {
+        $project->invite(User::whereEmail(request('email'))->first());
+
+        return redirect($project->path());
     }
 }
