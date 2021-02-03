@@ -9,6 +9,7 @@
             <p id="description" class="text_lg ml_3">{{$project->description}}</p> 
         </div>
 
+        @can('destroy', $project)
         <div class="mt_3  mr_4">
             <a href="{{ $project->path().'/edit'}}" class="no_decoration btn_orange py_1 px_3 rounded_1">Edit</a>
             <form action="{{$project->path()}}" method="POST">
@@ -17,6 +18,8 @@
                 <button class="py_1 px_3 mt_2 rounded_1 no_border btn_red">Delete</button>
             </form>
         </div>
+        @endcan
+        
     </div>
 
     <div id="tasks" class="container p_3 bc_milky rounded_3 mt_3 shadow_1">
@@ -45,6 +48,16 @@
         </ul>
     </div>
 
+    @can('destroy', $project)
+    <div id="invite-user" class="container justify_between p_3 bc_milky rounded_3 mt_3 shadow_1">
+        <h1 class="text_xl text_skiny mb_1">Invite User</h1>
+        <form action="{{$project->path().'/invitation'}}" method="POST">
+            @csrf
+            <input type="email" class="{{$errors->has('email') ? 'shadow_red_1' : 'shadow_1'}} ml_4 border_1 rounded_1 text_lg p_1" name="email" placeholder="Email">
+        </form>
+    </div>
+    @endcan
+
     <div id="additions" class="flex_row container justify_between p_3 bc_milky rounded_3 mt_3 shadow_1">
         
         <div id="notes" class="w75">
@@ -65,6 +78,13 @@
             @include('projects.activity.card', compact('project'))
         </div>
 
+    </div>
+
+    <div id="inviteds" class="flex_column container justify_between p_3 bc_milky rounded_3 mt_3 shadow_1">
+        <h1 class="text_xl text_skiny mb_1">Invited Users</h1>
+        @foreach ($project->members as $user)
+            <p class="pl_4">{{$user->name}}</p>
+        @endforeach
     </div>
 
 </div>

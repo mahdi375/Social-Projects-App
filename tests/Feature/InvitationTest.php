@@ -10,13 +10,11 @@ use Tests\TestCase;
 
 class InvitationTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     /** @test */
     public function a_project_can_invite_a_user()
     {
-        $this->withoutExceptionHandling();
-
         $project = ProjectSetup::create();
         $this->signIn($project->owner);
         $user = factory(User::class)->create();
@@ -31,32 +29,58 @@ class InvitationTest extends TestCase
     /** @test */
     function inviting_user_email_must_be_an_site_member_account()
     {
+        $project = ProjectSetup::create();
+        $fakeEmail = $this->faker()->email;
 
+        $this->signIn($project->owner);
+
+        $this->post($project->path().'/invitation', [
+            'email' => $fakeEmail,
+        ])->assertSessionHasErrors('email');
     }
 
     /** @test  */
     function not_project_owner_users_cant_invite_user()
     {
-        // invited user can not invite another user to  !!
+        $project = ProjectSetup::create();
+        $user = $this->signIn();
+
+        // signed in user can not invite user
+        $this->post($project->path().'/invitation', [
+            'email' => $user->email,
+        ])->assertForbidden();
+
+        // invited user can not invite another one
+        $project->invite($user);
+
+        $this->post($project->path().'/invitation', [
+            'email' => $user->email,
+        ])->assertForbidden();
     }
     
     /** @test */
-    public function invited_user_can_edit_deltails_of_project()
+    public function invited_user_can_not_edit_entire_project()
     {
         $project = ProjectSetup::create();
-        $taghe = factory(User::class)->create();
-        $project->invite($taghe);
-        $this->signIn($taghe);
-        $this->patch($project->path(),['title' => 'Changed', 'description' => $project->description])
-            ->assertRedirect($project->path());
+        $taghe = $this->signIn();
 
-        $this->assertDatabaseHas('projects', ['title' => 'Changed']);
+        $project->invite($taghe);
+        $this->get($project->path().'/edit')->assertForbidden();
+        $this->patch($project->path(), ProjectSetup::raw())->assertForbidden();
 
     }
 
     /** @test */
     public function user_can_see_projects_they_have_been_invited_to_in_dashboard()
     {
-        
+        $project = ProjectSetup::create();
+        $taghe = $this->signIn();
+
+        $project->invite($taghe);
+        $this->get('/projects')
+            ->assertSee($project->title);
+
+        $this->get($project->path())
+            ->assertOk();
     }
 }

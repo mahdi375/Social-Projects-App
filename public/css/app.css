@@ -209,6 +209,10 @@
   box-shadow: -8px 8px 12px 1px #181818c7;
 }
 
+.shadow_red_1 {
+  box-shadow: 0px 0px 12px 1px #ff010170;
+}
+
 .p_1 {
   padding: 0.5em;
 }

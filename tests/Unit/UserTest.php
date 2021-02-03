@@ -26,6 +26,12 @@ class UserTest extends TestCase
     /** @test */
     public function a_use_has_accessible_projects()
     {
-        // $user->projects + invitedProjects  ...
+        $this->withoutExceptionHandling();
+        $project = ProjectSetup::create();
+        $user = factory(User::class)->create();
+
+        $project->invite($user);
+
+        $this->assertTrue($user->accessibleProjects()->contains($project));
     }
 }

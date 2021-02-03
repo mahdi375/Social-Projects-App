@@ -60,16 +60,19 @@
 
 ---- commit "two major invitation process tests passed"
 
-// user should can see all projects they have been invited to in dashboard
+@ // user should can see all projects they have been invited to in dashboard
     ... $user->accessibleProject()
-// are you sure that user can see others projects in dashboard ?
+@ // are you sure that user can see others projects in dashboard ?
 
-// add invited users list (+ their Gravatar) to project.show
+@ // add invited users list (+ their Gravatar) to project.show
 
-// dive deeper into Invitation
-// at the end make a form request on Invitation user (push authorization part on it by Gate...)
+@ // dive deeper into Invitation
+- // at the end make a form request on Invitation user (push authorization part on it by Gate...)
 
-// put an invitation form in project.show view
-// show this form just for project owner
+@ // put an invitation form in project.show view
+@ // show this form just for project owner
 
+@ // invited users should not can to delete project
+
+---- commit "invitation part was completed"
 ******>> 

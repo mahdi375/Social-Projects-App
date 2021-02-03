@@ -12,7 +12,7 @@ class ProjectsController extends Controller
 {
     public function index()
     {
-        $projects = auth()->user()->projects;
+        $projects = auth()->user()->accessibleProjects();
         
         return view('projects.index', compact('projects'));
     }
@@ -52,14 +52,14 @@ class ProjectsController extends Controller
 
     public function edit(Project $project)
     {
-        $this->authorize('update', $project);
+        $this->authorize('destroy', $project);
         
         return view('projects.edit', compact('project'));
     }
 
     public function update(Project $project)
     {
-        $this->authorize('update', $project);
+        $this->authorize('destroy', $project);
 
         $attributes = request()->validate([
             'title' => 'required|string',
@@ -96,6 +96,11 @@ class ProjectsController extends Controller
 
     public function invite(Project $project)
     {
+        $this->authorize('destroy', $project);
+        
+        request()->validate([
+            'email' => 'required|exists:users,email',
+        ]);
         $project->invite(User::whereEmail(request('email'))->first());
 
         return redirect($project->path());

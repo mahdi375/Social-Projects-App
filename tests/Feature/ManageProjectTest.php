@@ -147,7 +147,7 @@ class ManageProjectTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_only_see_their_project()
+    public function a_user_can_see_their_project()
     {
         
         $user = $this->signIn();
@@ -160,14 +160,14 @@ class ManageProjectTest extends TestCase
             ->assertOk()
             ->assertSee($theirProj->title);
 
-        //can see only their projects
+        //can see their projects
         $this->get('/projects')
             ->assertSee($theirProj->title)
             ->assertDontSee($otherProj->title);
-
+        
         //can not see project of other user
         $this->get($otherProj->path())
-            ->assertForbidden();
+            ->assertForbidden();    
     }
 
     /** @test */
