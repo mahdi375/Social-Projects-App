@@ -24,16 +24,8 @@ class ProjectsController extends Controller
 
     public function store()
     {
-        //validate
-        $attributes = request()->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'notes' => 'nullable|string'
-        ]);
-        
-        //persist
         //call relation as method so we can query to db (its a query builder)
-        Auth::user()->projects()->create($attributes);
+        Auth::user()->addProject($this->validData());
 
         //redirect
         return redirect('/projects');
@@ -44,8 +36,8 @@ class ProjectsController extends Controller
         $this->authorize('update', $project);
 
         $project->load('tasks');
+
         $activities = $project->getActivities()->limit(10)->get();
-        //$project->load('activities');
         
         return view('projects.show', compact('project', 'activities'));
     }
@@ -61,13 +53,7 @@ class ProjectsController extends Controller
     {
         $this->authorize('destroy', $project);
 
-        $attributes = request()->validate([
-            'title' => 'required|string',
-            'description' => 'required|string',
-            'notes' => 'nullable|string'
-        ]);
-
-        $project->update($attributes);
+        $project->update($this->validData());
 
         return redirect($project->path());
     }
@@ -101,8 +87,18 @@ class ProjectsController extends Controller
         request()->validate([
             'email' => 'required|exists:users,email',
         ]);
+        
         $project->invite(User::whereEmail(request('email'))->first());
 
         return redirect($project->path());
+    }
+
+    protected function validData()
+    {
+        return request()->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'notes' => 'nullable|string'
+        ]);
     }
 }

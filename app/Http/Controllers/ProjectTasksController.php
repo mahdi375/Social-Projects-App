@@ -12,24 +12,16 @@ class ProjectTasksController extends Controller
     public function store(Project $project)
     {
         $this->authorize('update', $project);
-        $task = request()->validate(['body' => 'required']);
-        $project->addTask($task);
+        $project->addTask($this->validData());
         
         return redirect($project->path());
     }
 
     public function update(Project $project, Task $task)
     {
-        // this queries should placed in model
         $this->authorize('update', $project);
-        request()->validate([
-            'body' => 'required',
-            'checked' => 'sometimes'
-        ]);
 
-        request('checked') ? $task->check() : $task->uncheck();
-
-        $task->update(request(['body']));
+        $task->wholeUpdate($this->validData());
 
         return redirect($project->path());
     }
@@ -41,6 +33,14 @@ class ProjectTasksController extends Controller
         $task->delete();
 
         return redirect($project->path());
+    }
+
+    protected function validData()
+    {
+        return request()->validate([
+            'body' => 'required|string',
+            'checked' => 'nullable'
+        ]);
     }
 
 }

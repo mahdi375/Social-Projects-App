@@ -4,6 +4,7 @@ namespace App;
 
 use App\Traites\RecordActivity;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Task extends Model
 {
@@ -24,6 +25,15 @@ class Task extends Model
     public function path()
     {
         return "{$this->project->path()}/tasks/{$this->id}";
+    }
+
+    public function wholeUpdate($data)
+    {
+        isset($data['checked']) ? $this->check() : $this->uncheck();
+
+        $this->update(Arr::only($data, 'body'));
+
+        return $this;  
     }
 
     public function wasChecked()

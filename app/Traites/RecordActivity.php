@@ -65,12 +65,8 @@ trait RecordActivity
     
     public function getActivities()
     {
-        if(class_basename($this) === 'Project')
-        {
-            return $this->activities()
-                ->orWhere('project_id', $this->id);
-        }
-
-        return $this->activities();
+        return class_basename($this) === 'Project' ?
+            ProjectActivity::where('project_id', $this->id) :
+            $this->activities();
     }
 }

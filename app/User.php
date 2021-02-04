@@ -42,6 +42,11 @@ class User extends Authenticatable
         return $this->hasMany(Project::class, 'owner_id')->latest('updated_at');
     }
 
+    public function addProject(array $attributes)
+    {
+        return $this->projects()->create($attributes);
+    }
+
     public function accessibleProjects()
     {
         $owned = $this->projects;
