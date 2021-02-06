@@ -13,11 +13,29 @@ use Tests\TestCase;
 class ProjectTasksTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
+    
+    /** @test */
+    public function user_can_add_task_to_project()
+    {
+        //Given
+        $user = $this->signIn();
+        $project = ProjectSetup::belongsTo($user)->create();
+
+        //When
+        $task = ProjectSetup::rawTask();
+        $response = $this->post($project->path().'/tasks', $task);
+
+        //Then
+        $response->assertRedirect($project->path());
+        $this->get($project->path())->assertSee($task['body']);
+        $this->assertEquals($task['body'], $project->fresh()->tasks()->first()->body);
+    }
+
     /** @test */
     public function a_gust_can_not_manage_task()
     {
         $project = ProjectSetup::withTask()->create();
-        $task = ['body' => $this->faker()->sentence()];
+        $task = ProjectSetup::rawTask();
 
         // request for adding new test
         $this->post($project->path().'/tasks', $task)->assertRedirect('/login');
@@ -28,34 +46,16 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function only_owner_of_project_can_add_tasks()
     {
-        $aUser = factory(User::class)->create();
+        $taghee = factory(User::class)->create();
 
         $project = ProjectSetup::create();
 
-        $task = ['body' => $this->faker()->sentence()];
+        $task = ProjectSetup::rawTask();
 
-        $this->actingAs($aUser)
+        $this->actingAs($taghee)
             ->post($project->path().'/tasks', $task)
             ->assertForbidden();
         $this->assertDatabaseMissing('tasks', $task);
-    }
-
-    /** @test */
-    public function a_project_can_has_task()
-    {
-        //Given
-        $user = $this->signIn();
-        $project = ProjectSetup::belongsTo($user)->create();
-
-        //When
-        $task = ['body' => $this->faker()->sentence()];
-        $response = $this->post($project->path().'/tasks', $task);
-
-        //Then
-        $response->assertRedirect($project->path());
-        $this->get($project->path())->assertSee($task['body']);
-        $this->assertDatabaseHas('tasks', $task);
-        $this->assertInstanceOf(\App\Task::class, $project->fresh()->tasks()->first());
     }
 
     /** @test */
@@ -63,13 +63,11 @@ class ProjectTasksTest extends TestCase
     {
         $project = ProjectSetup::create();
 
-        $task = ['body' => ''];
+        $task = ProjectSetup::rawTask(['body' => '']);
 
         $this->actingAs($project->owner)
             ->post($project->path().'/tasks', $task)
-            ->assertSessionHasErrors(['body']);
-        $this->assertDatabaseMissing('tasks', $task);
-        
+            ->assertSessionHasErrors(['body']);    
     }
 
     /** @test */
@@ -93,8 +91,6 @@ class ProjectTasksTest extends TestCase
             'checked' => 'checked'
         ]);
 
-        $response->assertRedirect($project->path());
-
         $task->refresh();
         
         $this->assertEquals('new body', $task->body);
@@ -110,9 +106,7 @@ class ProjectTasksTest extends TestCase
         $task->check();
         $this->assertTrue($task->wasChecked());
 
-        $data = [
-            'body' => $task->body,
-        ];
+        $data['body'] = $task->body;
         $this->patch($task->path(), $data);
 
         $this->assertFalse($task->fresh()->wasChecked());
@@ -125,12 +119,11 @@ class ProjectTasksTest extends TestCase
 
         $this->signIn();
 
-        $response = $this->patch($project->tasks[0]->path(), [
+        $this->patch($project->tasks[0]->path(), [
             'body' => 'new body',
             'checked' => 'checked'
-        ]);
-
-        $response->assertForbidden();    
+        ])->assertForbidden();
+        $this->assertFalse($project->tasks[0]->fresh()->wasChecked());   
     }
 
     /** @test */
@@ -139,7 +132,7 @@ class ProjectTasksTest extends TestCase
         $project = ProjectSetup::withTask()->create();
         $task = $project->tasks[0];
 
-        $this->actingAs(factory(User::class)->create())
+        $this->actingAs($this->signIn())
             ->delete($task->path())
             ->assertForbidden();
         

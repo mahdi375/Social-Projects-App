@@ -18,46 +18,30 @@ class ManageProjectTest extends TestCase
     public function a_user_can_create_a_project()
     {
         $this->signIn();
-        $attributes = [
-            'title' => $this->faker()->sentence(4),
-            'description' => $this->faker()->paragraph(2),
-            'notes' => $this->faker()->sentence(6),
-        ];
-
-        $this->get("/projects/create")->assertOk();
+        //dd(ProjectSetup::raw());
+        $attributes = ProjectSetup::raw([], $this->faker()->sentence(6));
 
         $this->post('/projects', $attributes)->assertRedirect('/projects');
 
         $this->assertDatabaseHas('projects', $attributes);
 
-        $project = Project::all()->first();
+        $this->get(Project::first()->path())
+            ->assertSee($attributes['title']);
 
-        $this->get($project->path())
-            ->assertSee($attributes['title'])
-            ->assertSee($attributes['description'])
-            ->assertSee($attributes['notes']);
         $this->get('/projects')->assertSee($attributes['title']);
     }
 
     /** @test */
     public function a_user_can_update_a_project()
     {
-        $this->withoutExceptionHandling();
-        
         $project = ProjectSetup::create();
         $this->signIn($project->owner);
 
         $this->get($project->path().'/edit')
-            ->assertSee($project->title)
-            ->assertSee($project->description)
-            ->assertSee($project->notes);
+            ->assertSee($project->title);
         
-        $newAtt = [
-            'title' => 'Title CHANGED',
-            'description' => 'Description CHANGED',
-            'notes' => null,
-        ];
-        
+        $newAtt = ProjectSetup::raw([], null);
+
         $this->patch($project->path(), $newAtt)
             ->assertRedirect($project->path()); 
         
@@ -147,7 +131,7 @@ class ManageProjectTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_see_their_project()
+    public function a_user_can_see_accessible_projects()
     {
         
         $user = $this->signIn();
@@ -157,7 +141,6 @@ class ManageProjectTest extends TestCase
 
         //can see their project
         $this->get($theirProj->path())
-            ->assertOk()
             ->assertSee($theirProj->title);
 
         //can see their projects
@@ -183,8 +166,8 @@ class ManageProjectTest extends TestCase
         $this->delete($project1->path())
             ->assertRedirect(action('ProjectsController@index'));
 
-        $this->assertDatabaseHas('projects', $project2->only('id', 'title'));
-        $this->assertDatabaseMissing('projects', $project1->only('id', 'title'));
+        $this->assertDatabaseHas('projects', $project2->fresh()->toArray());
+        $this->assertDatabaseMissing('projects', $project1->toArray());
     }
 
 }

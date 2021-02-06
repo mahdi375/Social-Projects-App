@@ -5,11 +5,10 @@ use App\Project;
 use App\Task;
 use App\User;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Arr;
 
 class ProjectSetup
 {
-    use WithFaker;
-
     protected $taskCount = 0;
     protected $taskAttributes = [];
     protected $user = null;
@@ -29,11 +28,11 @@ class ProjectSetup
         return $this;
     }
 
-    public function raw($attributes = [])
+    public function raw($attributes = [], $note = false)
     {
-        
-        $attributes = factory(Project::class)->raw($attributes);
-        unset($attributes['owner_id']);
+        $attributes = Arr::except(factory(Project::class)->raw($attributes), 'owner_id');
+
+        $note === false ?: $attributes['notes'] = $note;
 
         return $attributes;
     }
@@ -54,6 +53,11 @@ class ProjectSetup
         $this->clearStates();
 
         return $project;
+    }
+
+    public function rawTask($attributes = [], bool $withProjectId = false)
+    {
+        return Arr::except(factory(Task::class)->raw($attributes), $withProjectId ? [] : 'project_id');
     }
 
     protected function clearStates()

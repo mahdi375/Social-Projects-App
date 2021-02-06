@@ -19,10 +19,9 @@ class RecordActivityTest extends TestCase
     {
         ProjectSetup::create();
 
-        $activity = ProjectActivity::all()->last();
-        $this->assertCount(1, ProjectActivity::all());
-        $this->assertEquals('project-created', $activity->description);
-        $this->assertInstanceOf(Project::class, $activity->subject);
+        $activities = ProjectActivity::all();
+        $this->assertCount(1, $activities);
+        $this->assertEquals('project-created', $activities->last()->description);
     }
     
     /** @test */
@@ -103,16 +102,11 @@ class RecordActivityTest extends TestCase
         $task = $project->tasks[0];
         $this->signIn($project->owner);
 
-        $data = [
-            'body' => $task->body,
-        ];
+        $data = ProjectSetup::rawTask();
 
         $this->patch($task->path(), $data);
 
-        $activities = ProjectActivity::all();
-
-        $this->assertEquals('task-unchecked', $activities->last()->description);
-        $this->assertInstanceOf(Task::class, $activities->last()->subject);
+        $this->assertEquals('task-unchecked', ProjectActivity::all()->last()->description);
     }
     
     /** @test */
